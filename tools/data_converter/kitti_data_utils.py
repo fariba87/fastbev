@@ -145,7 +145,7 @@ def get_kitti_image_info(path,
                          calib=False,
                          image_ids=7481,
                          extend_matrix=True,
-                         num_worker=8,
+                         num_worker=0,
                          relative_path=True,
                          with_imageshape=True):
     """
@@ -270,7 +270,7 @@ def get_waymo_image_info(path,
                          pose=False,
                          image_ids=7481,
                          extend_matrix=True,
-                         num_worker=8,
+                         num_worker=0,
                          relative_path=True,
                          with_imageshape=True,
                          max_sweeps=5):

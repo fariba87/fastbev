@@ -84,7 +84,7 @@ class ScanNetData(object):
         mmcv.check_file_exist(matrix_file)
         return np.loadtxt(matrix_file)
 
-    def get_infos(self, num_workers=4, has_label=True, sample_id_list=None):
+    def get_infos(self, num_workers=0, has_label=True, sample_id_list=None):
         """Get data infos.
 
         This method gets information from the raw data.

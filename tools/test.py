@@ -1,4 +1,40 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+import pandas as pd
+pd = pd.read_pickle('F:/SW/testfastbev/Fast-BEV/data/nuscenes/nuscenes_infos_val_4d_interval3_max60.pkl')
+import numpy as np
+rot= pd['infos'][10]['cams']['CAM_BACK']['sensor2lidar_rotation']
+tran= pd['infos'][10]['cams']['CAM_BACK']['sensor2lidar_translation']
+Cam= pd['infos'][10]['cams']['CAM_BACK']['cam_intrinsic']
+# rotinv = np.linalg.inv(rot)
+# D = tran@rotinv.T
+# Z= D.tolist()
+# Z.append(1)
+#
+# lidar2cam= np.zeros((4,4))
+# lidar2cam[-1,:] = Z#[D.tolist(), 1]
+# lidar2cam[0:-1, 0:-1]=rotinv
+# S = S= np.zeros((4,4))#np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
+# S[0:-1, 0:-1]= Cam
+# S
+
+lidar2camera_r = np.linalg.inv(rot)
+lidar2camera_t = (
+        tran @ lidar2camera_r.T
+)
+lidar2camera_rt = np.eye(4).astype(np.float32)
+lidar2camera_rt[:3, :3] = lidar2camera_r.T
+lidar2camera_rt[3, :3] = -lidar2camera_t
+#data["lidar2camera"].append(lidar2camera_rt.T)
+
+# camera intrinsics
+camera_intrinsics = np.eye(4).astype(np.float32)
+camera_intrinsics[:3, :3] = Cam
+#data["camera_intrinsics"].append(camera_intrinsics)
+
+# lidar to image transform
+lidar2image = camera_intrinsics @ lidar2camera_rt.T
+#data["lidar2image"].append(lidar2image)
+
 import argparse
 import mmcv
 import os
@@ -29,8 +65,8 @@ import ipdb
 def parse_args():
     parser = argparse.ArgumentParser(
         description='MMDet test (and eval) a model')
-    parser.add_argument('config', help='test config file path')
-    parser.add_argument('checkpoint', help='checkpoint file')
+    parser.add_argument('config', help='test config file path', default ='F:/SW/testfastbev/Fast-BEV/configs/fastbev/exp/paper/fastbev_m5_r50_s512x1408_v250x250x6_c256_d6_f4.py' )
+    parser.add_argument('checkpoint', help='checkpoint file', default ='F:/SW/testfastbev/Fast-BEV/epoch_20.pth')
     parser.add_argument('--out', help='output result file in pickle format')
     parser.add_argument(
         '--fuse-conv-bn',
@@ -254,4 +290,6 @@ def main():
 
 
 if __name__ == '__main__':
+    #torch.multiprocessing.set_start_method('fork')
+
     main()

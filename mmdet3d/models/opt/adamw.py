@@ -1,5 +1,5 @@
 import torch
-from torch.optim import _functional as F
+from torch.optim import functional as F
 from torch.optim.optimizer import Optimizer
 from mmcv.runner.optimizer.builder import OPTIMIZERS
 
